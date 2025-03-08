@@ -34,3 +34,38 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
 bool is_adjacent(const string& word1, const string& word2) {
     return edit_distance_within(word1, word2, 1);
 }
+
+
+vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
+    vector<string> curr;
+    if (word_list.find(end_word) == word_list.end() || begin_word == end_word) return curr;
+
+    queue<vector<string>> ladder_queue;
+    curr.push_back(begin_word);
+    ladder_queue.push(curr);
+
+    set<string> visited;
+    visited.insert(begin_word);
+
+    while (!ladder_queue.empty()) {
+        curr = ladder_queue.front();
+        ladder_queue.pop();
+        string last_word = curr.back();
+
+        for (string word : word_list) {
+            if (is_adjacent(last_word, word)) {
+                if (visited.find(word) == visited.end()) {
+                    visited.insert(word);
+                    vector<string> new_ladder = curr;
+                    new_ladder.push_back(word);
+                    if (word == end_word) {
+                        return new_ladder;
+                    }
+                    ladder_queue.push(new_ladder);
+                }
+            }
+        }
+    }
+    curr.clear();
+    return curr;
+}

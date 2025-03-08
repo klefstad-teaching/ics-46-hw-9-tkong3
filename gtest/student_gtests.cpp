@@ -29,6 +29,41 @@ TEST(LadderTests, Adjacent) {
     EXPECT_FALSE(is_adjacent(word1, word2));
 }
 
+TEST(LadderTests, GenerateLadderSameEndBegin) {
+    string word1 = "cat";
+    string word2 = "cat";
+    set<string> placeholder;
+    vector<string> result = generate_word_ladder(word1, word2, placeholder);
+    EXPECT_TRUE(result.empty());
+}
+
+TEST(LadderTests, GenerateLadderEndWordNotInList) {
+    string word1 = "cat";
+    string word2 = "cut";
+    set<string> placeholder{"cue", "hat"};
+    vector<string> result = generate_word_ladder(word1, word2, placeholder);
+    EXPECT_TRUE(result.empty());
+}
+
+TEST(LadderTests, GenerateLadderShort) {
+    string word1 = "cat";
+    string word2 = "cheat";
+    set<string> placeholder{"chat", "car", "cheat"};
+    vector<string> result = generate_word_ladder(word1, word2, placeholder);
+    EXPECT_TRUE(result[0] == "cat");
+    EXPECT_TRUE(result[1] == "chat");
+    EXPECT_TRUE(result[2] == "cheat");
+    EXPECT_TRUE(result.size() == 3);
+}
+
+TEST(LadderTests, GenerateLadderNoPossibilities) {
+    string word1 = "cat";
+    string word2 = "cheat";
+    set<string> placeholder{"car", "cheat"};
+    vector<string> result = generate_word_ladder(word1, word2, placeholder);
+    EXPECT_TRUE(result.empty());
+}
+
 
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
