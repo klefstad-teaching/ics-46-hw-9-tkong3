@@ -31,12 +31,8 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
 
 vector<int> extract_shortest_path(const vector<int>& distances, const vector<int>& previous, int destination) {
     vector<int> shortest_path;
-    if (distances[destination] == INF) {
-        return shortest_path;
-    }
-    while (destination != -1) {
-        shortest_path.push_back(destination);
-        destination = previous[destination];
+    for (int at = destination; at != -1; at = previous[at]) {
+        shortest_path.push_back(at);
     }
     reverse(shortest_path.begin(), shortest_path.end());
     return shortest_path;
