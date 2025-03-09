@@ -64,15 +64,39 @@ TEST(LadderTests, GenerateLadderNoPossibilities) {
     EXPECT_TRUE(result.empty());
 }
 
+TEST(DijkstraTests, Distances) {
+    Graph g;
+    file_to_graph("src/small.txt", g);
+    vector<int> prev;
+    vector<int> result = dijkstra_shortest_path(g, 0, prev);
+    ASSERT_EQ(result[0], 0);
+    ASSERT_EQ(result[1], 3);
+    ASSERT_EQ(result[2], 6);
+    ASSERT_EQ(result[3], 1);
+}
+
 TEST(DijkstraTests, ShortestPath) {
     Graph g;
     file_to_graph("src/small.txt", g);
     vector<int> prev;
     vector<int> result = dijkstra_shortest_path(g, 0, prev);
-    for (auto e : result) {
-        cout << e << ' ';
-    }
+    vector<int> path = extract_shortest_path(result, prev, 0);
+    ASSERT_EQ(path[0], 0);
+    path = extract_shortest_path(result, prev, 1);
+    ASSERT_EQ(path[0], 0);
+    ASSERT_EQ(path[1], 3);
+    ASSERT_EQ(path[2], 1);
+    path = extract_shortest_path(result, prev, 2);
+    ASSERT_EQ(path[0], 0);
+    ASSERT_EQ(path[1], 3);
+    ASSERT_EQ(path[2], 1);
+    ASSERT_EQ(path[3], 2);
+    path = extract_shortest_path(result, prev, 3);
+    ASSERT_EQ(path[0], 0);
+    ASSERT_EQ(path[1], 3);
 }
+
+
 
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
