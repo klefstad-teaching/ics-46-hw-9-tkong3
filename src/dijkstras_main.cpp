@@ -14,4 +14,5 @@ int main() {
         prev.clear();
         test.clear();
     }
+    return 0;
 }
