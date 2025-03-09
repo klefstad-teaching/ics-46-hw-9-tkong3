@@ -101,8 +101,8 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                 if (word == end_word) {
                     return new_ladder;
                 }
-                ladder_queue.push(new_ladder);
                 visited.insert(word);
+                ladder_queue.push(new_ladder);
             }
         }
     }
