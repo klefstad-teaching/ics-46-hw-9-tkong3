@@ -47,6 +47,5 @@ void print_path(const vector<int>& v, int total) {
     for (int vertex : v) {
         cout << vertex << ' ';
     }
-    cout << "\n";
-    cout << "Total cost is " << total << "\n";
+    cout << total;
 }
