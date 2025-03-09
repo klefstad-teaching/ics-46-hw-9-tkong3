@@ -34,8 +34,9 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
     if (distances[destination] == INF) {
         return shortest_path;
     }
-    for (int at = destination; at != -1; at = previous[at]) {
-        shortest_path.push_back(at);
+    while (destination != -1) {
+        shortest_path.push_back(destination);
+        destination = previous[destination];
     }
     reverse(shortest_path.begin(), shortest_path.end());
     return shortest_path;
@@ -44,7 +45,7 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
 
 void print_path(const vector<int>& v, int total) {
     for (int vertex : v) {
-        cout << vertex << " ";
+        cout << vertex << ' ';
     }
     cout << "\n";
     cout << "Total cost is " << total << "\n";
