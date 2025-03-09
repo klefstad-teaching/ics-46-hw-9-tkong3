@@ -10,29 +10,69 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
     int str1_len = str1.size();
     int str2_len = str2.size();
     if (abs(str1_len - str2_len) > d) return false;
-    vector<int> prev(str2_len + 1), curr(str2_len + 1);
+    if (str1_len > str2_len) return edit_distance_within(str2, str1, d);
+
+    vector<int> dp(str2_len + 1);
 
     for (int i = 0; i <= str2_len; ++i) {
-        prev[i] = i;
+        dp[i] = i;
     }
-    for (int j = 1; j <= str1_len; ++j) {
-        curr[0] = j;
+    for (int i = 1; i <= str1_len; ++i) {
+        int prev_diag = dp[0];
+        dp[0] = i;
 
-        int lower = (d > 1) ? max(1, j - d) : 1;
-        int upper = (d > 1) ? min(str2_len, j + d) : str2_len;
+        int lower = max(1, i - d);
+        int upper = min(str2_len, i + d);
 
-        for (int n = lower; n <= upper; n++) {
-            if (str1[j - 1] == str2[n - 1]) curr[n] = prev[n - 1];
-            else curr[n] = 1 + min({prev[n], curr[n - 1], prev[n - 1]});
+        for (int j = lower; j <= upper; ++j) {
+            int temp = dp[j];
+            if (str1[i - 1] == str2[j - 1]) dp[j] = prev_diag;
+            else dp[j] = 1 + min({dp[j], dp[j - 1], prev_diag});
+            prev_diag = temp;
         }
-        prev.swap(curr);
+        bool within_limit = false;
+        for (int j = lower; j <= upper; ++j) {
+            if (dp[j] <= d) {
+                within_limit = true;
+                break;
+            }
+        }
+        if (!within_limit) return within_limit;
     }
-    return prev[str2_len] <= d;
+    return dp[str2_len] <= d;
 }
 
 
 bool is_adjacent(const string& word1, const string& word2) {
     return edit_distance_within(word1, word2, 1);
+    
+    // int len1 = word1.length(), len2 = word2.length();
+    // if (len1 - len2 != 0 && abs(len1 - len2) != 1) return false;
+    
+    // if (len1 == len2) {
+    //     int diff_count = 0;
+    //     for (int i = 0; i < len1; i++) {
+    //         if (word1[i] != word2[i]) {
+    //             diff_count++;
+    //             if (diff_count > 1) return false;
+    //         }
+    //     }
+    //     return diff_count == 1;
+    // }
+
+    // if (len1 > len2) return is_adjacent(word2, word1);
+
+    // int i = 0, j = 0;
+    // while (i < len1 && j < len2) {
+    //     if (word1[i] != word2[j]) {
+    //         if (i != j) return false;
+    //         j++;
+    //     } else {
+    //         i++;
+    //         j++;
+    //     }
+    // }
+    // return true;
 }
 
 
@@ -81,9 +121,11 @@ void load_words(set<string> & word_list, const string& file_name) {
 }
 
 void print_word_ladder(const vector<string>& ladder) {
+    cout << "Word laddder found: ";
     for (string e: ladder) {
         cout << e << " ";
     }
+    cout << "\n";
 }
 
 void my_assert(bool e) {cout << e << ((e) ? " passed": " failed") << "\n";}
