@@ -64,6 +64,15 @@ TEST(LadderTests, GenerateLadderNoPossibilities) {
     EXPECT_TRUE(result.empty());
 }
 
+TEST(DijkstraTests, ShortestPath) {
+    Graph g;
+    file_to_graph("src/small.txt", g);
+    vector<int> prev;
+    vector<int> result = dijkstra_shortest_path(g, 0, prev);
+    for (auto e : result) {
+        cout << e << ' ';
+    }
+}
 
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
