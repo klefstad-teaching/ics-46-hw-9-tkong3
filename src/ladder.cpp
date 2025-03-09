@@ -18,8 +18,8 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
     for (int j = 1; j <= str1_len; ++j) {
         curr[0] = j;
 
-        int lower = max(1, j - d);
-        int upper = min(str2_len, j + d);
+        int lower = (d > 1) ? max(1, j - d) : 1;
+        int upper = (d > 1) ? min(str2_len, j + d) : str2_len;
 
         for (int n = lower; n <= upper; n++) {
             if (str1[j - 1] == str2[n - 1]) curr[n] = prev[n - 1];
@@ -38,8 +38,10 @@ bool is_adjacent(const string& word1, const string& word2) {
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
     vector<string> curr;
-    if (word_list.find(end_word) == word_list.end() || begin_word == end_word) return curr;
-
+    if (word_list.find(end_word) == word_list.end() || begin_word == end_word) {
+        error(begin_word, end_word, "infinite loop (same word)");
+        return curr;
+    }
     queue<vector<string>> ladder_queue;
     curr.push_back(begin_word);
     ladder_queue.push(curr);
@@ -53,19 +55,53 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         string last_word = curr.back();
 
         for (string word : word_list) {
-            if (is_adjacent(last_word, word)) {
-                if (visited.find(word) == visited.end()) {
-                    visited.insert(word);
-                    vector<string> new_ladder = curr;
-                    new_ladder.push_back(word);
-                    if (word == end_word) {
-                        return new_ladder;
-                    }
-                    ladder_queue.push(new_ladder);
+            if (is_adjacent(last_word, word) && visited.find(word) == visited.end()) {
+                vector<string> new_ladder = curr;
+                new_ladder.push_back(word);
+                if (word == end_word) {
+                    return new_ladder;
                 }
+                ladder_queue.push(new_ladder);
+                visited.insert(word);
             }
         }
     }
     curr.clear();
     return curr;
+}
+
+
+
+void load_words(set<string> & word_list, const string& file_name) {
+    ifstream infile(file_name);
+    string word;
+    if (infile.is_open())
+        while (infile >> word) 
+            word_list.insert(word);
+}
+
+void print_word_ladder(const vector<string>& ladder) {
+    for (string e: ladder) {
+        cout << e << " ";
+    }
+}
+
+void my_assert(bool e) {cout << e << ((e) ? " passed": " failed") << "\n";}
+
+void verify_word_ladder() {
+    set<string> word_list;
+
+    load_words(word_list, "src/words.txt");
+
+    my_assert(generate_word_ladder("cat", "dog", word_list).size() == 4);
+
+    my_assert(generate_word_ladder("marty", "curls", word_list).size() == 6);
+
+    my_assert(generate_word_ladder("code", "data", word_list).size() == 6);
+
+    my_assert(generate_word_ladder("work", "play", word_list).size() == 6);
+
+    my_assert(generate_word_ladder("sleep", "awake", word_list).size() == 8);
+
+    my_assert(generate_word_ladder("car", "cheat", word_list).size() == 4);
 }
